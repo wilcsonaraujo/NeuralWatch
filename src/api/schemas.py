@@ -1,12 +1,10 @@
-import datetime
-import string
-
+from datetime import datetime
 from pydantic import BaseModel
-from typing import Optional
 
-class healthMetricsResponse(BaseModel):
-    status: string
-    service: string
-    version: string
-    environment: string
+
+class HealthMetricsOutput(BaseModel):
+    status: str
+    service: str
+    version: str
+    environment: str
     timestamp: datetime
