@@ -1,6 +1,6 @@
-from fastapi import APIRouter
 import datetime
-from ..schemas import HealthMetricsOutput
+from fastapi import APIRouter
+from src.api.schemas import HealthMetricsOutput
 
 router = APIRouter()
 
@@ -10,5 +10,5 @@ async def health_metrics_get_response():
             "service": "local host",
             "version": "v1",
             "environment": "dev",
-            "timestamp": datetime.datetime.now()
+            "timestamp": datetime.now(datetime.timezone.utc)
             }
