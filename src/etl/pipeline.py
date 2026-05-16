@@ -41,5 +41,5 @@ def transforming_data(df):
 
 
 def main():
-    df = read_csv_file()
-    df = df.pipe(cleaning_data).pipe(transforming_data)
+    df = cleaning_data()
+    df = transforming_data(df)
