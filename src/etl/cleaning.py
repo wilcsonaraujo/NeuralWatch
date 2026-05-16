@@ -11,7 +11,6 @@ def remove_constant_columns(df):
         if df[col].nunique() <= 1
     ]
     logging.info(f"Removing constant columns: {constant_cols}")
-    print(f'Removing constant columns: {constant_cols}')
     return df.drop(columns=constant_cols)
 
 def remove_duplicates(df):
