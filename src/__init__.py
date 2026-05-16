@@ -1,1 +1,1 @@
-from .api.routers import metrics_router
+from .api.routers import router
