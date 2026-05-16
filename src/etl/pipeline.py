@@ -41,7 +41,7 @@ def transforming_data(df):
     return df
 
 
-def main():
+def run_pipeline():
     df = read_csv_file()
 
     if df is None or df.empty:
@@ -53,9 +53,14 @@ def main():
     df = transforming_data(df)
 
     metrics_dict = extract_all_metrics(df)
-    print(metrics_dict)
+    return metrics_dict
+
+
+def main():
+    metrics = run_pipeline()
+    if metrics:
+        print(metrics)
 
 
 if __name__ == "__main__":
     main()
-    

@@ -2,28 +2,35 @@ import logging
 
 import pandas as pd
 
+
 def count_records(df):
     return len(df)
 
+
 def error_rate(df):
-    error_avg = df['is_error'].mean()
-    return error_avg
+    error_avg = df["is_error"].mean()
+    return float(error_avg)
+
 
 def avg_bytes_kb(df):
-    avg_kbytes = df['bytes_kb'].mean()
-    return avg_kbytes
+    avg_kbytes = df["bytes_kb"].mean()
+    return float(avg_kbytes)
+
 
 def std_bytes_kb(df):
-    std_kbytes = df['bytes_kb'].std()
-    return std_kbytes
+    std_kbytes = df["bytes_kb"].std() or 0.0
+    return float(std_kbytes)
+
 
 def empty_response_rate(df):
-    response_rate_avg = df['is_empty_response'].mean()
-    return response_rate_avg
+    response_rate_avg = df["is_empty_response"].mean()
+    return float(response_rate_avg)
+
 
 def unique_endpoints(df):
-    count_unique_endpoints = df['endpoint_group'].nunique()
+    count_unique_endpoints = df["endpoint_group"].nunique()
     return count_unique_endpoints
+
 
 def extract_all_metrics(df):
     metrics_dict = {
@@ -32,7 +39,7 @@ def extract_all_metrics(df):
         "avg_bytes_kb": avg_bytes_kb(df),
         "std_bytes_kb": std_bytes_kb(df),
         "empty_response_rate": empty_response_rate(df),
-        "unique_endpoints": unique_endpoints(df)
+        "unique_endpoints": unique_endpoints(df),
     }
     logging.info("Extracted metrics successfully.")
     return metrics_dict
