@@ -1,9 +1,6 @@
 import numpy as np
 import pandas as pd
 
-def verify_null_values(df):
-    df.isnull().sum()
-    
 def transform_time_features(df):
     df['time'] = pd.to_datetime(df['time'], unit='s')
     df['hour'] = df['time'].dt.hour

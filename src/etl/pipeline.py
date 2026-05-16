@@ -15,8 +15,7 @@ def cleaning_data():
     logging.info(f"Cleaning success.")
     return df
 
-def transforming_data():
-    df = cleaning_data()
+def transforming_data(df):
     df = transform_time_features(df)
     df = extract_status_family(df)
     df = create_is_error(df)
@@ -24,13 +23,11 @@ def transforming_data():
     df = convert_bytes_to_kbytes(df)
     df = create_endpoint_group(df)
     logging.info(f"Transforming success.")
-    #print(df.head(5))
-    #print(df['method'].value_counts())
     return df
 
 def main():
     df = cleaning_data()
-    df = transforming_data()
+    df = transforming_data(df)
     
 if __name__ == "__main__":
     main()

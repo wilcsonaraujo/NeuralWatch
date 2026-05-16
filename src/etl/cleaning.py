@@ -4,6 +4,7 @@ def remove_empty_columns(df):
     if(df.isnull().all(axis=0).any()):
         logging.info(f"Removing all null values columns.")
         return df.dropna(axis=1, how='all')
+    return df
 
 def remove_constant_columns(df):
     constant_cols = [
