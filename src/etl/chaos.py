@@ -1,12 +1,17 @@
 import logging
 import random
-
 import numpy as np
 import pandas as pd
 
 
 def simulate_traffic_spike(df):
-    df_aux = df.sample(frac=1.0, replace=True, random_state=1)
+    df_aux = df.sample(frac=1.0, replace=True)
+    df_aux[df_aux.sample(frac=1.0).index, "time"] = df_aux["time"] + np.random.randint(
+        1, 100, size=len(df_aux)
+    )
+    df_aux[df_aux.sample(frac=1.0).index, "bytes"] = df_aux[
+        "bytes"
+    ] + np.random.randint(1, 100, size=len(df_aux))
     df = pd.concat([df, df_aux], ignore_index=True)
     return df
 
@@ -21,7 +26,7 @@ def simulate_empty_responses(df):
     return df
 
 
-def inject_chaos(df, probability=1.0):
+def inject_chaos(df, probability=0.2):
     logging.info("Deciding whether or not to apply chaos.")
     chaos_functions = {
         "traffic_spike": simulate_traffic_spike,
