@@ -9,22 +9,22 @@ def count_records(df):
 
 def error_rate(df):
     error_avg = df["is_error"].mean()
-    return float(error_avg)
+    return 0.0 if pd.isna(error_avg) else float(error_avg)
 
 
 def avg_bytes_kb(df):
     avg_kbytes = df["bytes_kb"].mean()
-    return float(avg_kbytes)
+    return 0.0 if pd.isna(avg_kbytes) else float(avg_kbytes)
 
 
 def std_bytes_kb(df):
-    std_kbytes = df["bytes_kb"].std() or 0.0
-    return float(std_kbytes)
+    std_kbytes = df["bytes_kb"].std()
+    return 0.0 if pd.isna(std_kbytes) else float(std_kbytes)
 
 
 def empty_response_rate(df):
     response_rate_avg = df["is_empty_response"].mean()
-    return float(response_rate_avg)
+    return 0.0 if pd.isna(response_rate_avg) else float(response_rate_avg)
 
 
 def unique_endpoints(df):
