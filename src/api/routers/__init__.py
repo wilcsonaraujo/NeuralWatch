@@ -1,1 +1,1 @@
-from .metrics import router as metrics_router
+from .api_router import router as router
