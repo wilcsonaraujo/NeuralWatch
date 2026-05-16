@@ -6,6 +6,7 @@ from src.etl.cleaning import (
     normalize_column_names,
     remove_constant_columns,
 )
+from src.etl.metrics import extract_all_metrics
 from src.etl.transform import (
     convert_bytes_to_kbytes,
     create_endpoint_group,
@@ -41,5 +42,20 @@ def transforming_data(df):
 
 
 def main():
-    df = cleaning_data()
+    df = read_csv_file()
+
+    if df is None or df.empty:
+        logging.error("DataFrame empty or not loaded.")
+        print("DataFrame empty or not loaded")
+        return None
+
+    df = cleaning_data(df)
     df = transforming_data(df)
+
+    metrics_dict = extract_all_metrics(df)
+    print(metrics_dict)
+
+
+if __name__ == "__main__":
+    main()
+    
