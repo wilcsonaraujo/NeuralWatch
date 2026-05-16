@@ -1,4 +1,5 @@
 import logging
+from src.etl.chaos import inject_chaos
 from src.etl.extract import read_csv_file
 from src.etl.cleaning import (
     remove_empty_columns,
@@ -48,6 +49,8 @@ def run_pipeline():
         logging.error("DataFrame empty or not loaded.")
         print("DataFrame empty or not loaded")
         return None
+
+    df = inject_chaos(df)
 
     df = cleaning_data(df)
     df = transforming_data(df)
