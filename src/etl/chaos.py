@@ -22,7 +22,7 @@ def simulate_empty_responses(df):
     return df
 
 
-def inject_chaos(df, probability=0.2):
+def inject_chaos(df, probability=1.0):
     logging.info("Deciding whether or not to apply chaos.")
     chaos_functions = {
         "traffic_spike": simulate_traffic_spike,

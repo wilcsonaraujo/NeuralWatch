@@ -4,6 +4,8 @@ from sklearn.ensemble import IsolationForest
 from src.db.database import get_all_metrics
 from pathlib import Path
 
+MODEL_PATH = Path(__file__).parent / "isolation_forest.joblib"
+
 
 def prepare_data_for_training():
     metrics_list = get_all_metrics()
@@ -19,12 +21,12 @@ def prepare_data_for_training():
 def train_and_save_model(df):
     model = IsolationForest(contamination=0.1, random_state=42)
     model.fit(df)
-    joblib.dump(model, "isolation_forest.joblib")
+    joblib.dump(model, MODEL_PATH)
     return model
 
 
 def predict_anomaly(metrics_dict):
-    model = joblib.load("isolation_forest.joblib")
+    model = joblib.load(MODEL_PATH)
     df = pd.DataFrame([metrics_dict])
     result = model.predict(df)
     return bool(result[0] == -1)
@@ -34,8 +36,6 @@ def model():
     data_df = prepare_data_for_training()
     train_and_save_model(data_df)
 
-
-MODEL_PATH = Path(__file__).parent / "isolation_forest.joblib"
 
 if __name__ == "__main__":
     model()

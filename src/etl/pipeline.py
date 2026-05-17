@@ -62,8 +62,7 @@ def run_pipeline():
 
 
 def pipeline():
-    for i in range(50):
-        metrics = run_pipeline()
+    metrics = run_pipeline()
 
 
 if __name__ == "__main__":

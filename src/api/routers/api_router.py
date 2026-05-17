@@ -32,8 +32,7 @@ def run_pipeline_router():
 @router.post("/train-model", summary="Run Training Model")
 def run_training_model():
     try:
-        metrics = get_all_metrics()
-        df = prepare_data_for_training(metrics)
+        df = prepare_data_for_training()
         train_and_save_model(df)
         return {"message": "Model retrained successfully"}
     except ValueError as e:
