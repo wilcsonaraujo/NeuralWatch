@@ -10,6 +10,8 @@ class HealthService(BaseModel):
     timestamp: datetime
 
 class MetricsOutput(BaseModel):
+    id: int = Field(..., description="Id.")
+    timestamp: datetime = Field(..., description="Current timestamp.")
     total_requests: int = Field(..., description="Total batch requests.")
     error_rate: float = Field(..., ge=0, le=1, description="Error rate (0-1)")
     avg_bytes_kb: float = Field(..., ge=0, description="Average bytes in KB")

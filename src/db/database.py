@@ -2,7 +2,6 @@ import datetime
 import logging
 import sqlite3
 from dotenv import load_dotenv
-import pandas as pd
 
 load_dotenv()
 
@@ -17,7 +16,7 @@ def get_connection():
 
 
 def init_db():
-    create_table_sql = """CREATE TABLE IF NOT EXISTS etl_metrics (
+    create_table_sql = """CREATE TABLE IF NOT EXISTS neuralwatch (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         total_requests INTEGER NOT NULL,
@@ -40,7 +39,7 @@ def init_db():
         logging.error("Table creation failed.")
 
 
-def insert_metrics(metrics_dict, db_path="neuralwatch.db"):
+def insert_metrics(metrics_dict):
 
     # SQL de inserção
     insert_sql = """
@@ -57,7 +56,7 @@ def insert_metrics(metrics_dict, db_path="neuralwatch.db"):
     """
     try:
         values = (
-            datetime.now(),  # timestamp
+            datetime.datetime.now(),  # timestamp
             metrics_dict.get("total_requests", 0),  # total_requests
             metrics_dict.get("error_rate", 0.0),  # error_rate
             metrics_dict.get("avg_bytes_kb", 0.0),  # avg_bytes_kb
@@ -66,7 +65,7 @@ def insert_metrics(metrics_dict, db_path="neuralwatch.db"):
             metrics_dict.get("unique_endpoints", 0),  # unique_endpoints
             metrics_dict.get("anomaly_detected", 0),  # anomaly_detected
         )
-        conn = get_connection(db_path)
+        conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(insert_sql, values)
         logging.info(
@@ -83,11 +82,11 @@ def insert_metrics(metrics_dict, db_path="neuralwatch.db"):
         return False
 
 
-def get_all_metrics(db_path="neuralwatch.db"):
+def get_all_metrics():
     query = "SELECT * FROM etl_metrics ORDER BY timestamp DESC"
 
     try:
-        conn = get_connection(db_path)
+        conn = get_connection()
         conn.row_factory = sqlite3.Row
         cursor = conn.execute(query)
         rows = cursor.fetchall()
@@ -97,4 +96,4 @@ def get_all_metrics(db_path="neuralwatch.db"):
 
     except Exception as e:
         print(f"Consulting error: {e}")
-        return pd.DataFrame()
+        return []
