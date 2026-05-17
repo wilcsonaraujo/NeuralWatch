@@ -56,13 +56,13 @@ def run_pipeline():
 
     metrics_dict = extract_all_metrics(df)
     is_anomaly = predict_anomaly(metrics_dict)
-    metrics_dict['anomaly_detected'] = is_anomaly
+    metrics_dict["anomaly_detected"] = is_anomaly
     insert_metrics(metrics_dict)
     return metrics_dict
 
 
 def pipeline():
-    metrics = run_pipeline()
+    run_pipeline()
 
 
 if __name__ == "__main__":

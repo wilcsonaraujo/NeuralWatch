@@ -5,20 +5,27 @@ import pandas as pd
 
 
 def simulate_traffic_spike(df):
-    df_aux = df.sample(frac=1.0, replace=True)
+    frac = random.choice([0.5, 1.0, 2.0, 3.0])
+    samples = []
+
+    df_aux = df.sample(frac=frac, replace=True)
+
     df_aux["time"] = df_aux["time"] + np.random.randint(1, 100, size=len(df_aux))
     df_aux["bytes"] = df_aux["bytes"] + np.random.randint(1, 100, size=len(df_aux))
-    df = pd.concat([df, df_aux], ignore_index=True)
+
+    df = pd.concat([df, df_aux] + samples, ignore_index=True)
     return df
 
 
 def simulate_system_outage(df):
-    df.loc[df.sample(frac=0.4).index, "response"] = 500
+    frac = random.choice([0.7, 0.4, 0.2])
+    df.loc[df.sample(frac=frac).index, "response"] = 500
     return df
 
 
 def simulate_empty_responses(df):
-    df.loc[df.sample(frac=0.7).index, "bytes"] = 0
+    frac = random.choice([0.7, 0.4, 0.2])
+    df.loc[df.sample(frac=frac).index, "bytes"] = 0
     return df
 
 
