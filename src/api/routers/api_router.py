@@ -1,7 +1,7 @@
 import datetime
 from fastapi import APIRouter
 from src.api.schemas import HealthService, MetricsOutput
-from src.etl.pipeline import run_pipeline
+from src.db.database import get_all_metrics
 
 router = APIRouter()
 
@@ -17,7 +17,7 @@ async def health_get_response():
     }
 
 
-@router.get("/metrics", response_model=MetricsOutput, summary="Pipeline Metrics")
+@router.get("/metrics", response_model=list[MetricsOutput], summary="Pipeline Metrics")
 async def metrics_get_response():
-    metrics = run_pipeline()
+    metrics = get_all_metrics()
     return metrics
