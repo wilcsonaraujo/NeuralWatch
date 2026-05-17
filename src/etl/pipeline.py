@@ -1,5 +1,5 @@
 import logging
-from src.db.database import init_db
+from src.db.database import init_db, insert_metrics
 from src.etl.chaos import inject_chaos
 from src.etl.extract import read_csv_file
 from src.etl.cleaning import (
@@ -58,6 +58,7 @@ def run_pipeline():
     df = transforming_data(df)
 
     metrics_dict = extract_all_metrics(df)
+    insert_metrics(metrics_dict)
     return metrics_dict
 
 

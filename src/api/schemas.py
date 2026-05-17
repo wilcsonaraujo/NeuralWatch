@@ -16,3 +16,4 @@ class MetricsOutput(BaseModel):
     std_bytes_kb: float = Field(..., ge=0, description="Standard deviation in KB")
     empty_response_rate: float = Field(..., ge=0, le=1, description="Empty response rate")
     unique_endpoints: int = Field(..., ge=0, description="Number of unique endpoints")
+    anomaly_detected: int = Field(..., ge=0, le=1, description="Anomaly detected (0-1)")
