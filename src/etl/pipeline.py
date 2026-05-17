@@ -17,6 +17,7 @@ from src.etl.transform import (
     extract_status_family,
     transform_time_features,
 )
+from src.ml.model import predict_anomaly
 
 
 def cleaning_data(df):
@@ -49,26 +50,20 @@ def run_pipeline():
 
     if df is None or df.empty:
         logging.error("DataFrame empty or not loaded.")
-        print("DataFrame empty or not loaded")
         return None
 
-    df = inject_chaos(df)
-
-    df = cleaning_data(df)
-    df = transforming_data(df)
+    df = df.pipe(inject_chaos).pipe(cleaning_data).pipe(transforming_data)
 
     metrics_dict = extract_all_metrics(df)
+    is_anomaly = predict_anomaly(metrics_dict)
+    metrics_dict['anomaly_detected'] = is_anomaly
     insert_metrics(metrics_dict)
     return metrics_dict
 
 
-def main():
+def pipeline():
     metrics = run_pipeline()
-    """ for i in range(30):
-        metrics = run_pipeline() """
-    if metrics:
-        print(metrics)
 
 
 if __name__ == "__main__":
-    main()
+    pipeline()

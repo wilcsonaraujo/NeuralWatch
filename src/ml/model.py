@@ -11,8 +11,9 @@ def prepare_data_for_training():
     if df.empty:
         raise ValueError("There is not enough data to train the model.")
 
-    df.drop(['id', 'timestamp', 'anomaly_detected'], axis=1, inplace=True)
+    df.drop(["id", "timestamp", "anomaly_detected"], axis=1, inplace=True)
     return df
+
 
 def train_and_save_model(df):
     model = IsolationForest(contamination=0.1, random_state=42)
@@ -20,13 +21,17 @@ def train_and_save_model(df):
     joblib.dump(model, "isolation_forest.joblib")
     return model
 
-def main():
+def predict_anomaly(metrics_dict):
+    model = joblib.load("isolation_forest.joblib")
+    df = pd.DataFrame([metrics_dict])
+    result = model.predict(df)
+    return bool(result[0] == -1)
+
+def model():
     data_df = prepare_data_for_training()
     train_and_save_model(data_df)
-    """ for i in range(30):
-        metrics = run_pipeline() """
-    print(data_df.head(5))
+    print(data_df.head(20))
 
 
 if __name__ == "__main__":
-    main()
+    model()
