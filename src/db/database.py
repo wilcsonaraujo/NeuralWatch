@@ -83,7 +83,7 @@ def insert_metrics(metrics_dict):
 
 
 def get_all_metrics():
-    query = "SELECT * FROM etl_metrics ORDER BY timestamp DESC"
+    query = "SELECT * FROM neuralwatch ORDER BY timestamp DESC"
 
     try:
         conn = get_connection()
