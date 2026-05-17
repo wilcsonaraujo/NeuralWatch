@@ -8,14 +8,12 @@ def simulate_traffic_spike(df):
     frac = random.choice([0.5, 1.0, 2.0, 3.0])
     samples = []
 
-    df_aux = df.sample(frac=frac, replace=True, random_state=42)
+    df_aux = df.sample(frac=frac, replace=True)
 
     df_aux["time"] = df_aux["time"] + np.random.randint(1, 100, size=len(df_aux))
     df_aux["bytes"] = df_aux["bytes"] + np.random.randint(1, 100, size=len(df_aux))
 
-    samples.append(df_aux)
-
-    df = pd.concat([df] + samples, ignore_index=True)
+    df = pd.concat([df, df_aux] + samples, ignore_index=True)
     return df
 
 

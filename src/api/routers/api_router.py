@@ -24,10 +24,12 @@ async def metrics_get_response():
     metrics = get_all_metrics()
     return metrics
 
+
 @router.post("/run-pipeline", summary="Run Pipeline")
 def run_pipeline_router():
     metrics = run_pipeline()
     return metrics
+
 
 @router.post("/train-model", summary="Run Training Model")
 def run_training_model():
