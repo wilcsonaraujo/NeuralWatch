@@ -22,7 +22,11 @@ def train_and_save_model(df):
     return model
 
 def predict_anomaly(metrics_dict):
+<<<<<<< HEAD
     model = joblib.load("isolation_forest.joblib")
+=======
+    joblib.load
+>>>>>>> a58f2fce1f1c9f17083b453356939b6b9dfb45a6
     df = pd.DataFrame([metrics_dict])
     result = model.predict(df)
     if(result == 1):
