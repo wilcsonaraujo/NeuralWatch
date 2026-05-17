@@ -1,3 +1,5 @@
+import logging
+
 import pandas as pd
 import joblib
 from sklearn.ensemble import IsolationForest
@@ -26,6 +28,9 @@ def train_and_save_model(df):
 
 
 def predict_anomaly(metrics_dict):
+    if not MODEL_PATH.exists():
+        logging.warning("Model not found. Skipping anomaly detection.")
+        return False
     model = joblib.load(MODEL_PATH)
     df = pd.DataFrame([metrics_dict])
     result = model.predict(df)
