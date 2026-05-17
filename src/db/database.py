@@ -31,7 +31,8 @@ def init_db():
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(create_table_sql)
-        if conn.commit():
-            conn.close()
+        logging.info("Table 'etl_metrics' created successfully")
+        conn.commit()
+        conn.close()
     except sqlite3.OperationalError:
         logging.error("Table creation failed.")
