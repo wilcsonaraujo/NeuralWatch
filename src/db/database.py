@@ -39,6 +39,7 @@ def init_db():
     except sqlite3.OperationalError:
         logging.error("Table creation failed.")
 
+
 def insert_metrics(metrics_dict, db_path="neuralwatch.db"):
 
     # SQL de inserção
@@ -56,19 +57,21 @@ def insert_metrics(metrics_dict, db_path="neuralwatch.db"):
     """
     try:
         values = (
-            datetime.now(),                              # timestamp
-            metrics_dict.get('total_requests', 0),       # total_requests
-            metrics_dict.get('error_rate', 0.0),         # error_rate
-            metrics_dict.get('avg_bytes_kb', 0.0),       # avg_bytes_kb
-            metrics_dict.get('std_bytes_kb', 0.0),       # std_bytes_kb
-            metrics_dict.get('empty_response_rate', 0.0),# empty_response_rate
-            metrics_dict.get('unique_endpoints', 0),     # unique_endpoints
-            metrics_dict.get('anomaly_detected', 0)      # anomaly_detected
+            datetime.now(),  # timestamp
+            metrics_dict.get("total_requests", 0),  # total_requests
+            metrics_dict.get("error_rate", 0.0),  # error_rate
+            metrics_dict.get("avg_bytes_kb", 0.0),  # avg_bytes_kb
+            metrics_dict.get("std_bytes_kb", 0.0),  # std_bytes_kb
+            metrics_dict.get("empty_response_rate", 0.0),  # empty_response_rate
+            metrics_dict.get("unique_endpoints", 0),  # unique_endpoints
+            metrics_dict.get("anomaly_detected", 0),  # anomaly_detected
         )
         conn = get_connection(db_path)
         cursor = conn.cursor()
         cursor.execute(insert_sql, values)
-        logging.info(f"Metrics inserted: {metrics_dict.get('total_requests', 0)} requests")
+        logging.info(
+            f"Metrics inserted: {metrics_dict.get('total_requests', 0)} requests"
+        )
         conn.commit()
         conn.close()
         return True
@@ -79,6 +82,7 @@ def insert_metrics(metrics_dict, db_path="neuralwatch.db"):
         logging.error(f"Error saving metrics: {e}")
         return False
 
+
 def get_all_metrics(db_path="neuralwatch.db"):
     query = "SELECT * FROM etl_metrics ORDER BY timestamp DESC"
 
@@ -88,9 +92,9 @@ def get_all_metrics(db_path="neuralwatch.db"):
         cursor = conn.execute(query)
         rows = cursor.fetchall()
         results = [dict(row) for row in rows]
-        
+
         return results
-            
+
     except Exception as e:
         print(f"Consulting error: {e}")
         return pd.DataFrame()
