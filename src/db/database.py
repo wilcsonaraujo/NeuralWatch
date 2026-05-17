@@ -9,8 +9,9 @@ def get_connection():
     try:
         connection = sqlite3.connect("neuralwatch.db")
         logging.info("Connection established.")
+        return connection
     except sqlite3.OperationalError:
-        logging.error("connection failed.")
+        logging.error("Connection failed.")
 
 
 def init_db():
@@ -25,4 +26,12 @@ def init_db():
         unique_endpoints INTEGER NOT NULL,
         anomaly_detected INTEGER DEFAULT 0
     );"""
-    pass
+
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(create_table_sql)
+        if conn.commit():
+            conn.close()
+    except sqlite3.OperationalError:
+        logging.error("Table creation failed.")

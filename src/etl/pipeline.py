@@ -1,5 +1,5 @@
 import logging
-from src.db.database import get_connection
+from src.db.database import init_db
 from src.etl.chaos import inject_chaos
 from src.etl.extract import read_csv_file
 from src.etl.cleaning import (
@@ -45,7 +45,7 @@ def transforming_data(df):
 
 def run_pipeline():
     df = read_csv_file()
-    get_connection()
+    init_db()
 
     if df is None or df.empty:
         logging.error("DataFrame empty or not loaded.")
