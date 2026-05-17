@@ -64,6 +64,8 @@ def run_pipeline():
 
 def main():
     metrics = run_pipeline()
+    """ for i in range(30):
+        metrics = run_pipeline() """
     if metrics:
         print(metrics)
 

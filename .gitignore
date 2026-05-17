@@ -158,6 +158,7 @@ env.bak/
 venv.bak/
 .vscode/
 *.db
+*.joblib
 
 # Spyder project settings
 .spyderproject
