@@ -9,7 +9,7 @@ def prepare_data_for_training():
     df = pd.DataFrame(metrics_list)
 
     if df.empty:
-        ValueError("There is not enough data to train the model.")
+        raise ValueError("There is not enough data to train the model.")
 
     df.drop(['id', 'timestamp', 'anomaly_detected'], axis=1, inplace=True)
     return df
