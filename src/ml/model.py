@@ -1,12 +1,14 @@
 import logging
-
 import pandas as pd
 import joblib
 from sklearn.ensemble import IsolationForest
 from src.db.database import get_all_metrics
+from sklearn.preprocessing import StandardScaler
 from pathlib import Path
 
+
 MODEL_PATH = Path(__file__).parent / "isolation_forest.joblib"
+MODEL_SCALER_PATH = Path(__file__).parent / "scaler.joblib"
 
 
 def prepare_data_for_training():
@@ -20,27 +22,41 @@ def prepare_data_for_training():
     return df
 
 
-def train_and_save_model(df):
+def train_and_save_model_iso_forest(df):
     model = IsolationForest(contamination=0.1, random_state=42)
     model.fit(df)
     joblib.dump(model, MODEL_PATH)
     return model
 
+def train_and_save_model_scaler(df):
+    scaler = StandardScaler()
+    x_scaled = scaler.fit_transform(df)
+    joblib.dump(scaler, MODEL_SCALER_PATH)
+    return x_scaled
+
 
 def predict_anomaly(metrics_dict):
     if not MODEL_PATH.exists():
-        logging.warning("Model not found. Skipping anomaly detection.")
+        logging.warning("Isolation model not found. Skipping anomaly detection.")
         return False
-    model = joblib.load(MODEL_PATH)
-    df = pd.DataFrame([metrics_dict])
-    result = model.predict(df)
-    return bool(result[0] == -1)
+    if not MODEL_SCALER_PATH.exists():
+        logging.warning("Scaler model not found. Skipping anomaly detection.")
+        return False
+    try:
+        isolation_model = joblib.load(MODEL_PATH)
+        scaler_model = joblib.load(MODEL_SCALER_PATH)
 
+        df = pd.DataFrame([metrics_dict])
+        x_scaled = scaler_model.transform(df)
 
-def model():
-    data_df = prepare_data_for_training()
-    train_and_save_model(data_df)
-
+        result = isolation_model.predict(x_scaled)
+        return bool(result[0] == -1)
+    except Exception as e:
+        logging.error(f"Error in anomaly prediction: {e}")
+        return False
 
 if __name__ == "__main__":
-    model()
+    data_df = prepare_data_for_training()
+    data_scaler = train_and_save_model_scaler(data_df)
+    train_and_save_model_iso_forest(data_scaler)
+    
