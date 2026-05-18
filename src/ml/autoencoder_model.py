@@ -2,6 +2,8 @@ import joblib
 from pathlib import Path
 from keras import layers, models
 
+from src.ml.model import prepare_data_for_training, train_and_save_model_scaler
+
 MODEL_SCALER_PATH = Path(__file__).parent / "scaler.joblib"
 
 def build_autoencoder(input_dim, encoding_dim):
@@ -23,10 +25,10 @@ def train_autoencoder(model, data):
     model.save("src/ml/autoencoder_model.keras")
     return history
 
-def autoEncoderModel():
-    builded_autoencoder = build_autoencoder(6, 3)
-    data_scaler = joblib.load(MODEL_SCALER_PATH)
-    train_autoencoder(builded_autoencoder, data_scaler)
 
 if __name__ == "__main__":
-    autoEncoderModel()
+    data_df = prepare_data_for_training()
+    data_scaler = train_and_save_model_scaler(data_df)
+    builded_autoencoder = build_autoencoder(data_df.shape[1], data_df.shape[1]/2)    
+    train_autoencoder(builded_autoencoder, data_scaler)
+    data_df_after = prepare_data_for_training()
