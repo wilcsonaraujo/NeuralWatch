@@ -34,8 +34,9 @@ def run_pipeline_router():
 @router.post("/train-model", summary="Run Training Model")
 def run_training_model():
     try:
-        df = (df.pipe(prepare_data_for_training).pipe(train_and_save_model_scaler))
-        train_and_save_model_scaler(df)
+        df = prepare_data_for_training()
+        df_scaler = train_and_save_model_scaler(df)
+        train_and_save_model_iso_forest(df_scaler)
         return {"message": "Model retrained successfully"}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

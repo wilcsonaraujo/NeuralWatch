@@ -55,14 +55,8 @@ def predict_anomaly(metrics_dict):
         logging.error(f"Error in anomaly prediction: {e}")
         return False
 
-
-def train_isolation_forest_script(data_df):
-    train_and_save_model_iso_forest(data_df)
-
-def train_stantard_scaler_script(data_df):
-    train_and_save_model_scaler(data_df)
-
 if __name__ == "__main__":
     data_df = prepare_data_for_training()
-    train_isolation_forest_script(data_df)
-    train_stantard_scaler_script(data_df)
+    data_scaler = train_and_save_model_scaler(data_df)
+    train_and_save_model_iso_forest(data_scaler)
+    
