@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from src.api.schemas import HealthService, MetricsOutput
 from src.db.database import get_all_metrics
 from src.etl.pipeline import run_pipeline
-from src.ml.model import prepare_data_for_training, train_and_save_model_iso_forest
+from src.ml.model import prepare_data_for_training, train_and_save_model_iso_forest, train_and_save_model_scaler
 
 router = APIRouter()
 
@@ -34,8 +34,8 @@ def run_pipeline_router():
 @router.post("/train-model", summary="Run Training Model")
 def run_training_model():
     try:
-        df = prepare_data_for_training()
-        train_and_save_model_iso_forest(df)
+        df = (df.pipe(prepare_data_for_training).pipe(train_and_save_model_scaler))
+        train_and_save_model_scaler(df)
         return {"message": "Model retrained successfully"}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
