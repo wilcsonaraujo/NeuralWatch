@@ -63,6 +63,8 @@ def run_pipeline():
 
 def pipeline():
     run_pipeline()
+    """ for i in range(20):
+        run_pipeline() """
 
 
 if __name__ == "__main__":
