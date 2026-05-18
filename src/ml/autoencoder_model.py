@@ -1,7 +1,9 @@
 import joblib
 from pathlib import Path
 from keras import layers, models
+import numpy as np
 import pandas as pd
+import tensorflow as tf
 from src.ml.model import prepare_data_for_training, train_and_save_model_scaler
 
 MODEL_SCALER_PATH = Path(__file__).parent / "scaler.joblib"
@@ -27,15 +29,19 @@ def train_autoencoder(model, data):
     return history
 
 def predict_anomaly_autoencoder(metrics_dict, threshold):
-    autoencoder_model =joblib.load(MODEL_AUTOENCODER_PATH)
+    autoencoder_model = tf.keras.models.load_model(MODEL_AUTOENCODER_PATH)
     scaler_model =joblib.load(MODEL_SCALER_PATH)
 
     df = pd.DataFrame([metrics_dict])
     x_scaled = scaler_model.transform(df)
 
-    mean_squared_error = autoencoder_model.predict(x_scaled)
-    result = df.compare(mean_squared_error, 1, -1)
-    return result
+    X_reconstructed = autoencoder_model.predict(x_scaled)
+    mse = tf.keras.losses.mean_squared_error(x_scaled, X_reconstructed)
+    errors = tf.keras.losses.mean_squared_error(x_scaled, X_reconstructed).numpy()
+
+    threshold = np.percentile(errors, 95)
+    is_anomaly = errors > threshold
+    return is_anomaly
 
 def autoencoder():
     data_df = prepare_data_for_training()
