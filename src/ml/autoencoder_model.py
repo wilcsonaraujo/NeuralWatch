@@ -7,4 +7,5 @@ def build_autoencoder(input_dim, encoding_dim):
     encoded = layers.Dense(encoding_dim, activation='relu')(input_layer)
     decoded = layers.Dense(input_dim, activation='linear')(encoded)
     autoencoder = models.Model(input_layer, decoded)
+    autoencoder.compile(loss='binary_crossentropy', optimizer='adam', metrics='auc')
     return autoencoder
