@@ -1,10 +1,11 @@
 import joblib
 from pathlib import Path
 from keras import layers, models
-
+import pandas as pd
 from src.ml.model import prepare_data_for_training, train_and_save_model_scaler
 
 MODEL_SCALER_PATH = Path(__file__).parent / "scaler.joblib"
+MODEL_AUTOENCODER_PATH = Path(__file__).parent / "autoencoder_model.keras"
 
 def build_autoencoder(input_dim, encoding_dim):
     input_layer = layers.Input(shape=(input_dim,))
@@ -22,13 +23,26 @@ def train_autoencoder(model, data):
         shuffle=True,
         validation_split=0.2
     )
-    model.save("src/ml/autoencoder_model.keras")
+    model.save(MODEL_AUTOENCODER_PATH)
     return history
 
+def predict_anomaly_autoencoder(metrics_dict, threshold):
+    autoencoder_model =joblib.load(MODEL_AUTOENCODER_PATH)
+    scaler_model =joblib.load(MODEL_SCALER_PATH)
 
-if __name__ == "__main__":
+    df = pd.DataFrame([metrics_dict])
+    x_scaled = scaler_model.transform(df)
+
+    mean_squared_error = autoencoder_model.predict(x_scaled)
+    result = df.compare(mean_squared_error, 1, -1)
+    return result
+
+def autoencoder():
     data_df = prepare_data_for_training()
     data_scaler = train_and_save_model_scaler(data_df)
-    builded_autoencoder = build_autoencoder(data_df.shape[1], data_df.shape[1]/2)    
+    builded_autoencoder = build_autoencoder(data_df.shape[1], int(data_df.shape[1]/2))    
     train_autoencoder(builded_autoencoder, data_scaler)
-    data_df_after = prepare_data_for_training()
+    return 
+
+if __name__ == "__main__":
+    autoencoder()
