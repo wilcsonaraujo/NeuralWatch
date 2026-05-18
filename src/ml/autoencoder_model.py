@@ -25,7 +25,7 @@ def train_autoencoder(model, data):
 
 def autoEncoderModel():
     builded_autoencoder = build_autoencoder(6, 3)
-    data_scaler = joblib.dump(MODEL_SCALER_PATH)
+    data_scaler = joblib.load(MODEL_SCALER_PATH)
     train_autoencoder(builded_autoencoder, data_scaler)
 
 if __name__ == "__main__":
