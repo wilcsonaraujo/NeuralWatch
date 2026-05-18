@@ -28,6 +28,7 @@ def train_autoencoder(model, data):
     model.save(MODEL_AUTOENCODER_PATH)
     return history
 
+
 def predict_anomaly_autoencoder(metrics_dict, threshold):
     autoencoder_model = tf.keras.models.load_model(MODEL_AUTOENCODER_PATH)
     scaler_model =joblib.load(MODEL_SCALER_PATH)
@@ -37,11 +38,12 @@ def predict_anomaly_autoencoder(metrics_dict, threshold):
 
     X_reconstructed = autoencoder_model.predict(x_scaled)
     mse = tf.keras.losses.mean_squared_error(x_scaled, X_reconstructed)
-    errors = tf.keras.losses.mean_squared_error(x_scaled, X_reconstructed).numpy()
+   
+    error = mse.numpy()[0]
+    is_anomaly = error > threshold
 
-    threshold = np.percentile(errors, 95)
-    is_anomaly = errors > threshold
     return is_anomaly
+
 
 def autoencoder():
     data_df = prepare_data_for_training()
@@ -49,6 +51,7 @@ def autoencoder():
     builded_autoencoder = build_autoencoder(data_df.shape[1], int(data_df.shape[1]/2))    
     train_autoencoder(builded_autoencoder, data_scaler)
     return 
+
 
 if __name__ == "__main__":
     autoencoder()
