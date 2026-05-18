@@ -1,5 +1,6 @@
 import datetime
 from fastapi import APIRouter, HTTPException
+import pandas as pd
 from src.api.schemas import HealthService, MetricsOutput
 from src.db.database import get_all_metrics
 from src.etl.pipeline import run_pipeline
@@ -35,7 +36,7 @@ def run_pipeline_router():
 def run_training_model():
     try:
         df = prepare_data_for_training()
-        df_scaler = train_and_save_model_scaler(df)
+        df_scaler = pd.DataFrame(train_and_save_model_scaler(df))
         train_and_save_model_iso_forest(df_scaler)
         return {"message": "Model retrained successfully"}
     except ValueError as e:

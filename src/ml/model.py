@@ -37,17 +37,17 @@ def train_and_save_model_scaler(df):
 
 def predict_anomaly(metrics_dict):
     if not MODEL_PATH.exists():
-        logging.warning("Model not found. Skipping anomaly detection.")
+        logging.warning("Isolation model not found. Skipping anomaly detection.")
         return False
     if not MODEL_SCALER_PATH.exists():
-        logging.warning("Model not found. Skipping anomaly detection.")
+        logging.warning("Scaler model not found. Skipping anomaly detection.")
         return False
     try:
         isolation_model = joblib.load(MODEL_PATH)
         scaler_model = joblib.load(MODEL_SCALER_PATH)
 
         df = pd.DataFrame([metrics_dict])
-        x_scaled = scaler_model.transform(metrics_dict)
+        x_scaled = scaler_model.transform(df)
 
         result = isolation_model.predict(x_scaled)
         return bool(result[0] == -1)
