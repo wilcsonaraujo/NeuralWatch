@@ -30,9 +30,9 @@ def train_and_save_model_iso_forest(df):
 
 def train_and_save_model_scaler(df):
     scaler = StandardScaler()
-    scaler.fit_transform(df)
+    x_scaled = scaler.fit_transform(df)
     joblib.dump(scaler, MODEL_SCALER_PATH)
-    return scaler
+    return x_scaled
 
 
 def predict_anomaly(metrics_dict):

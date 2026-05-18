@@ -36,7 +36,7 @@ def run_pipeline_router():
 def run_training_model():
     try:
         df = prepare_data_for_training()
-        df_scaler = pd.DataFrame(train_and_save_model_scaler(df))
+        df_scaler = train_and_save_model_scaler(df)
         train_and_save_model_iso_forest(df_scaler)
         return {"message": "Model retrained successfully"}
     except ValueError as e:
