@@ -37,7 +37,7 @@ def run_pipeline_router():
     return metrics
 
 
-@router.post("/train-model", summary="Run Train Scaler Model")
+@router.post("/train-scaler-model", summary="Run Train Scaler Model")
 def run_scaler_training_model():
     try:
         run_scaler_model()
@@ -48,7 +48,7 @@ def run_scaler_training_model():
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@router.post("/train-autoencoder", summary="Run Train Autoencoder Model")
+@router.post("/train-autoencoder-model", summary="Run Train Autoencoder Model")
 def run_autoencoder_training_model():
     try:
         run_autoencoder_model()
