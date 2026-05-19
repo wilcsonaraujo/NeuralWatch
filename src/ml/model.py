@@ -55,9 +55,11 @@ def predict_anomaly(metrics_dict):
         logging.error(f"Error in anomaly prediction: {e}")
         return False
 
-
-if __name__ == "__main__":
+def run_scaler_model():
     data_df = prepare_data_for_training()
     data_scaler = train_and_save_model_scaler(data_df)
     train_and_save_model_iso_forest(data_scaler)
+
+if __name__ == "__main__":
+    run_scaler_model()
     

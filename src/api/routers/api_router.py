@@ -4,7 +4,12 @@ import pandas as pd
 from src.api.schemas import HealthService, MetricsOutput
 from src.db.database import get_all_metrics
 from src.etl.pipeline import run_pipeline
-from src.ml.model import prepare_data_for_training, train_and_save_model_iso_forest, train_and_save_model_scaler
+from src.ml.autoencoder_model import (
+    load_threshold,
+    predict_anomaly_autoencoder,
+    run_autoencoder_model,
+)
+from src.ml.model import run_scaler_model
 
 router = APIRouter()
 
@@ -32,13 +37,34 @@ def run_pipeline_router():
     return metrics
 
 
-@router.post("/train-model", summary="Run Training Model")
-def run_training_model():
+@router.post("/train-scaler-model", summary="Run Train Scaler Model")
+def run_scaler_training_model():
     try:
-        df = prepare_data_for_training()
-        df_scaler = train_and_save_model_scaler(df)
-        train_and_save_model_iso_forest(df_scaler)
-        return {"message": "Model retrained successfully"}
+        run_scaler_model()
+        return {"message": "Scalar model retrained successfully"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@router.post("/train-autoencoder-model", summary="Run Train Autoencoder Model")
+def run_autoencoder_training_model():
+    try:
+        run_autoencoder_model()
+        return {"message": "Autoencoder model retrained successfully"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@router.post("/predict-autoencoder", summary="Predict Autoencoder Model")
+def run_predict_autoencoder_training_model(metrics: dict):
+    try:
+        current_threshold = load_threshold()
+        is_anomaly = predict_anomaly_autoencoder(metrics, current_threshold)
+        return {"anomaly_detected": is_anomaly, "threshold_used": current_threshold}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
