@@ -1,6 +1,5 @@
 import json
 import logging
-
 import joblib
 from pathlib import Path
 from keras import layers, models
@@ -57,9 +56,10 @@ def predict_anomaly_autoencoder(metrics_dict, threshold):
         logging.error(f"Error in anomaly prediction: {e}")
         return False
 
+
 def calculate_threshold(model, scaled_data):
     try:
-        reconstructed_data  = model.predict(scaled_data)
+        reconstructed_data = model.predict(scaled_data)
         mse = np.mean(np.power(scaled_data - reconstructed_data, 2), axis=1)
         errors = mse.numpy()
 
@@ -67,26 +67,18 @@ def calculate_threshold(model, scaled_data):
         print(f"\n🎯 Limiar (percentil 95%): {threshold:.6f}")
         print(f"   → 95% dos dados têm erro <= {threshold:.6f}")
         print(f"   → 5% dos dados são considerados anomalias")
-        return threshold, errors
-    
+        return threshold
+
     except Exception as e:
         logging.error(f"Error in threshold calculation: {e}")
         return False
-    
+
+
 def save_threshold(threshold_value):
-    try:
-        with open(THRESHOLD_PATH, "r", encoding="utf-8") as file:
-            threshold_file = json.load(file)
-            logging.info("Threshold json created.")
-    except FileNotFoundError:
-        threshold_file = {}
-
-    threshold_file.append(threshold_value)
-
     with open(THRESHOLD_PATH, "w", encoding="utf-8") as file:
         json.dump(threshold_value, file, indent=4, ensure_ascii=False)
-        logging.info("Threshold json updated.")
-            
+        logging.info("Threshold json created.")
+
 
 if __name__ == "__main__":
     data_df = prepare_data_for_training()
