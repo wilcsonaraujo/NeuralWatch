@@ -1,3 +1,4 @@
+import json
 import logging
 
 import joblib
@@ -10,6 +11,7 @@ from src.ml.model import prepare_data_for_training, train_and_save_model_scaler
 
 MODEL_SCALER_PATH = Path(__file__).parent / "scaler.joblib"
 MODEL_AUTOENCODER_PATH = Path(__file__).parent / "autoencoder_model.keras"
+THRESHOLD_PATH = Path(__file__).parent / "threshold.json"
 
 
 def build_autoencoder(input_dim, encoding_dim):
@@ -55,6 +57,28 @@ def predict_anomaly_autoencoder(metrics_dict, threshold):
         logging.error(f"Error in anomaly prediction: {e}")
         return False
 
+def calculate_threshold(model, scaled_data):
+    try:
+        reconstructed_data  = model.predict(scaled_data)
+        mse = np.mean(np.power(scaled_data - reconstructed_data, 2), axis=1)
+        errors = mse.numpy()
+
+        threshold = np.percentile(errors, 95)
+        print(f"\n🎯 Limiar (percentil 95%): {threshold:.6f}")
+        print(f"   → 95% dos dados têm erro <= {threshold:.6f}")
+        print(f"   → 95% dos dados são considerados anomalias")
+        return threshold, errors
+    
+    except Exception as e:
+        logging.error(f"Error in threshold calculation: {e}")
+        return False
+    
+def save_threshold(threshold_value):
+    if not THRESHOLD_PATH.exists():
+        with open(THRESHOLD_PATH, "w", encoding="utf-8") as file:
+            json.dump(threshold_value, file, indent=4, ensure_ascii=False)
+            logging.warning("Threshold json created or rewritten.")
+            
 
 if __name__ == "__main__":
     data_df = prepare_data_for_training()
