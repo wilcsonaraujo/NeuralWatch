@@ -84,4 +84,6 @@ if __name__ == "__main__":
     data_df = prepare_data_for_training()
     data_scaler = train_and_save_model_scaler(data_df)
     builded_autoencoder = build_autoencoder(data_df.shape[1], int(data_df.shape[1] / 2))
-    train_autoencoder(builded_autoencoder, data_scaler)
+    model = train_autoencoder(builded_autoencoder, data_scaler)
+    threshold_value = calculate_threshold(model, data_scaler)
+    save_threshold(threshold_value)
