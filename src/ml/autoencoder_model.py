@@ -66,7 +66,7 @@ def calculate_threshold(model, scaled_data):
         threshold = np.percentile(errors, 95)
         print(f"\n🎯 Limiar (percentil 95%): {threshold:.6f}")
         print(f"   → 95% dos dados têm erro <= {threshold:.6f}")
-        print(f"   → 95% dos dados são considerados anomalias")
+        print(f"   → 5% dos dados são considerados anomalias")
         return threshold, errors
     
     except Exception as e:
@@ -74,16 +74,26 @@ def calculate_threshold(model, scaled_data):
         return False
     
 def save_threshold(threshold_value):
-    if not THRESHOLD_PATH.exists():
-        with open(THRESHOLD_PATH, "w", encoding="utf-8") as file:
-            json.dump(threshold_value, file, indent=4, ensure_ascii=False)
-            logging.warning("Threshold json created or rewritten.")
+    try:
+        with open(THRESHOLD_PATH, "r", encoding="utf-8") as file:
+            threshold_file = json.load(file)
+            logging.info("Threshold json created.")
+    except FileNotFoundError:
+        threshold_file = {}
+
+    threshold_file.append(threshold_value)
+
+    with open(THRESHOLD_PATH, "w", encoding="utf-8") as file:
+        json.dump(threshold_value, file, indent=4, ensure_ascii=False)
+        logging.info("Threshold json updated.")
             
 
 if __name__ == "__main__":
     data_df = prepare_data_for_training()
     data_scaler = train_and_save_model_scaler(data_df)
     builded_autoencoder = build_autoencoder(data_df.shape[1], int(data_df.shape[1] / 2))
-    model = train_autoencoder(builded_autoencoder, data_scaler)
-    threshold_value = calculate_threshold(model, data_scaler)
+    train_autoencoder(builded_autoencoder, data_scaler)
+
+    autoencoder_model = tf.keras.models.load_model(MODEL_AUTOENCODER_PATH)
+    threshold_value = calculate_threshold(autoencoder_model, data_scaler)
     save_threshold(threshold_value)
