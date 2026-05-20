@@ -18,7 +18,7 @@ def build_autoencoder(input_dim, encoding_dim):
     encoded = layers.Dense(encoding_dim, activation="relu")(input_layer)
     decoded = layers.Dense(input_dim, activation="linear")(encoded)
     autoencoder = models.Model(input_layer, decoded)
-    autoencoder.compile(loss="mean_squared_error", optimizer="adam", metrics="mse")
+    autoencoder.compile(loss="mean_squared_error", optimizer="adam", metrics=["mse"])
     return autoencoder
 
 
@@ -44,12 +44,12 @@ def predict_anomaly_autoencoder(metrics_dict, threshold):
         x_scaled = scaler_model.transform(df)
 
         X_reconstructed = autoencoder_model.predict(x_scaled)
-        mse = tf.keras.losses.mean_squared_error(x_scaled, X_reconstructed)
+        mse = np.mean(np.power(x_scaled - X_reconstructed, 2), axis=1)
 
-        error = mse.numpy()[0]
+        error = mse[0]
         is_anomaly = error > threshold
 
-        return is_anomaly
+        return int(is_anomaly)
     except Exception as e:
         logging.error(f"Error in anomaly prediction: {e}")
         return False
@@ -59,12 +59,8 @@ def calculate_threshold(model, scaled_data):
     try:
         reconstructed_data = model.predict(scaled_data)
         mse = np.mean(np.power(scaled_data - reconstructed_data, 2), axis=1)
-        errors = mse.numpy()
 
-        threshold = np.percentile(errors, 95)
-        print(f"\n🎯 Limiar (percentil 95%): {threshold:.6f}")
-        print(f"   → 95% dos dados têm erro <= {threshold:.6f}")
-        print(f"   → 5% dos dados são considerados anomalias")
+        threshold = np.percentile(mse, 95)
         return threshold
 
     except Exception as e:

@@ -1,11 +1,11 @@
 import logging
 import pandas as pd
 import joblib
+import os
 from sklearn.ensemble import IsolationForest
 from src.db.database import get_all_metrics
 from sklearn.preprocessing import StandardScaler
 from pathlib import Path
-
 
 MODEL_PATH = Path(__file__).parent / "isolation_forest.joblib"
 MODEL_SCALER_PATH = Path(__file__).parent / "scaler.joblib"
@@ -27,6 +27,7 @@ def train_and_save_model_iso_forest(df):
     model.fit(df)
     joblib.dump(model, MODEL_PATH)
     return model
+
 
 def train_and_save_model_scaler(df):
     scaler = StandardScaler()
@@ -55,11 +56,31 @@ def predict_anomaly(metrics_dict):
         logging.error(f"Error in anomaly prediction: {e}")
         return False
 
+
+def get_prediction(metrics_dict):
+    try:
+        model_type = os.getenv("MODEL_TYPE", "ISOLATION_FOREST")
+
+        if model_type == "AUTOENCODER":
+            from src.ml.autoencoder_model import (
+                predict_anomaly_autoencoder,
+                load_threshold,
+            )
+
+            threshold = load_threshold()
+            return predict_anomaly_autoencoder(metrics_dict, threshold)
+        else:
+            return predict_anomaly(metrics_dict)
+    except Exception as e:
+        logging.error(f"Error predicting model: {e}")
+        return False
+
+
 def run_scaler_model():
     data_df = prepare_data_for_training()
     data_scaler = train_and_save_model_scaler(data_df)
     train_and_save_model_iso_forest(data_scaler)
 
+
 if __name__ == "__main__":
     run_scaler_model()
-    

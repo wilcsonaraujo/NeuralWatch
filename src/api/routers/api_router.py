@@ -1,6 +1,6 @@
 import datetime
+import os
 from fastapi import APIRouter, HTTPException
-import pandas as pd
 from src.api.schemas import HealthService, MetricsOutput
 from src.db.database import get_all_metrics
 from src.etl.pipeline import run_pipeline
@@ -9,7 +9,7 @@ from src.ml.autoencoder_model import (
     predict_anomaly_autoencoder,
     run_autoencoder_model,
 )
-from src.ml.model import run_scaler_model
+from src.ml.model import get_prediction, run_scaler_model
 
 router = APIRouter()
 
@@ -69,3 +69,18 @@ def run_predict_autoencoder_training_model(metrics: dict):
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@router.post("/predict", summary="Predict Model")
+def run_predic_model(metrics: dict):
+    try:
+        get_predis_anomaly = get_prediction(metrics)
+        model_used = os.getenv("MODEL_TYPE", "ISOLATION_FOREST")
+        
+        return {
+            "anomaly_detected": get_predis_anomaly,
+            "model_version": model_used,
+            "status": "success"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

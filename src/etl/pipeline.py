@@ -17,7 +17,7 @@ from src.etl.transform import (
     extract_status_family,
     transform_time_features,
 )
-from src.ml.model import predict_anomaly
+from src.ml.model import get_prediction
 
 
 def cleaning_data(df):
@@ -55,16 +55,16 @@ def run_pipeline():
     df = df.pipe(inject_chaos).pipe(cleaning_data).pipe(transforming_data)
 
     metrics_dict = extract_all_metrics(df)
-    is_anomaly = predict_anomaly(metrics_dict)
+    is_anomaly = get_prediction(metrics_dict)
     metrics_dict["anomaly_detected"] = is_anomaly
     insert_metrics(metrics_dict)
     return metrics_dict
 
 
 def pipeline():
-    run_pipeline()
-    """ for i in range(20):
-        run_pipeline() """
+    #run_pipeline()
+    for i in range(15):
+        run_pipeline()
 
 
 if __name__ == "__main__":
