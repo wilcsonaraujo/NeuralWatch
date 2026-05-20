@@ -384,32 +384,61 @@ async function runPipeline() {
   }
 }
 
-async function trainModel() {
-  const btn   = document.getElementById("btn-train-model");
-  const label = document.getElementById("btn-train-model-label");
+async function trainScaler() {
+  const btn   = document.getElementById("btn-train-scaler");
+  const label = document.getElementById("btn-train-scaler-label");
 
   btn.disabled    = true;
   label.textContent = "⏳ Training...";
-  showToast("⚙ Training model... this may take a few seconds.", "info");
+  showToast("⚙ Training Scaler... this may take a few seconds.", "info");
 
   try {
-    const res = await fetch(`${API_BASE_URL}/train-model`, {
+    const res = await fetch(`${API_BASE_URL}/train-scaler-model`, {
       method: "POST",
       signal: AbortSignal.timeout(120000),
     });
 
     if (res.ok) {
       const data = await res.json();
-      showToast(`✓ Model trained successfully! ${data.message || ""}`, "success");
+      showToast(`✓ Scaler trained successfully! ${data.message || ""}`, "success");
     } else {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
-      showToast(`✗ Training failed: ${err.detail || res.statusText}`, "error");
+      showToast(`✗ Scaler training failed: ${err.detail || res.statusText}`, "error");
     }
   } catch (err) {
     showToast(`✗ Could not reach API: ${err.message}`, "error");
   } finally {
     btn.disabled    = false;
-    label.textContent = "⚙ Train / Retrain Model";
+    label.textContent = "⚙ Train Scaler";
+  }
+}
+
+async function trainAutoencoder() {
+  const btn   = document.getElementById("btn-train-autoencoder");
+  const label = document.getElementById("btn-train-autoencoder-label");
+
+  btn.disabled    = true;
+  label.textContent = "⏳ Training...";
+  showToast("🧠 Training Autoencoder... this may take a few seconds.", "info");
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/train-autoencoder`, {
+      method: "POST",
+      signal: AbortSignal.timeout(180000),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      showToast(`✓ Autoencoder trained successfully! ${data.message || ""}`, "success");
+    } else {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      showToast(`✗ Autoencoder training failed: ${err.detail || res.statusText}`, "error");
+    }
+  } catch (err) {
+    showToast(`✗ Could not reach API: ${err.message}`, "error");
+  } finally {
+    btn.disabled    = false;
+    label.textContent = "🧠 Train Autoencoder";
   }
 }
 
