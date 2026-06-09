@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+neuralwatch.db
+src/ml/isolation_forest.joblib
+src/ml/scaler.joblib
