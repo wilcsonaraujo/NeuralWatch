@@ -1,0 +1,7 @@
+{
+    "python.analysis.extraPaths": [
+        "./src/api",
+        "./src/api/routers"
+    ],
+    "python-envs.defaultEnvManager": "ms-python.python:system"
+}

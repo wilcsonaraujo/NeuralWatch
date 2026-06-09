@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuralWatch — ETL Health Monitor</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <h1>⚡ NeuralWatch</h1>
+    <span>
+      <span id="status-dot"></span>
+      <span id="api-status">Connecting...</span>
+    </span>
+  </header>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn" onclick="loadData()">↻ Refresh</button>
+      <button class="btn secondary" onclick="toggleAutoRefresh()">
+        <span id="auto-refresh-label">▶ Auto Refresh (30s)</span>
+      </button>
+      <div class="controls-separator"></div>
+      <button class="btn action" id="btn-run-pipeline" onclick="runPipeline()">
+        <span id="btn-run-pipeline-label">▶ Run Pipeline</span>
+      </button>
+      <button class="btn secondary" id="btn-train-scaler" onclick="trainScaler()">
+        <span id="btn-train-scaler-label">⚙ Train Scaler</span>
+      </button>
+      <button class="btn secondary" id="btn-train-autoencoder" onclick="trainAutoencoder()">
+        <span id="btn-train-autoencoder-label">🧠 Train Autoencoder</span>
+      </button>
+      <span id="last-updated"></span>
+    </div>
+
+    <!-- Action Feedback Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card" id="kpi-total">
+        <div class="label">Total Executions</div>
+        <div class="value" id="kpi-total-val">—</div>
+        <div class="sub">pipeline runs recorded</div>
+      </div>
+      <div class="kpi-card" id="kpi-anomalies">
+        <div class="label">Anomalies Detected</div>
+        <div class="value" id="kpi-anomalies-val">—</div>
+        <div class="sub" id="kpi-anomalies-pct">of total runs</div>
+      </div>
+      <div class="kpi-card" id="kpi-error-rate">
+        <div class="label">Avg Error Rate</div>
+        <div class="value" id="kpi-error-rate-val">—</div>
+        <div class="sub">across all runs</div>
+      </div>
+      <div class="kpi-card" id="kpi-requests">
+        <div class="label">Avg Requests / Run</div>
+        <div class="value" id="kpi-requests-val">—</div>
+        <div class="sub">total_requests average</div>
+      </div>
+      <div class="kpi-card" id="kpi-last-run">
+        <div class="label">Last Run Status</div>
+        <div class="value" id="kpi-last-run-val">—</div>
+        <div class="sub" id="kpi-last-run-time">—</div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Error Rate Over Time</h3>
+        <canvas id="chart-error-rate"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Total Requests Over Time</h3>
+        <canvas id="chart-requests"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Avg Response Size (KB)</h3>
+        <canvas id="chart-bytes"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Anomaly Detection Timeline</h3>
+        <canvas id="chart-anomalies"></canvas>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <h3>Recent Executions</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Timestamp</th>
+              <th>Total Requests</th>
+              <th>Error Rate</th>
+              <th>Avg KB</th>
+              <th>Std KB</th>
+              <th>Empty Resp.</th>
+              <th>Endpoints</th>
+              <th>Anomaly</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <tr><td colspan="9"><div class="empty-state">Loading data...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
